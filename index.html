@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>離散數學計算工具 (Combinatorial Calculator)</title>
+
+<!-- 可選擇使用 Noto Sans TC 字型，若不需可移除 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    margin: 0;
+    background: #f7f7f7;
+    color: #333;
+    line-height: 1.6;
+  }
+
+  .top-bar {
+    background: #2c3e50;
+    color: #ecf0f1;
+    padding: 8px 0;
+    text-align: center;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+  }
+
+  header {
+    background: linear-gradient(to right, #2c3e50, #3e5060);
+    color: #ecf0f1;
+    padding: 20px 0;
+    text-align: center;
+  }
+
+  header img {
+    vertical-align: middle;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 2px solid #ecf0f1;
+  }
+
+  header h1 {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 500;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: 30px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+
+  h2, h3 {
+    color: #2c3e50;
+    margin-top: 40px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+    font-weight: 500;
+  }
+
+  p, ol, li {
+    margin-bottom: 10px;
+  }
+
+  table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    text-align: center;
+    font-size: 0.95rem;
+  }
+
+  th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    vertical-align: middle;
+  }
+
+  th {
+    background: #ecf0f1;
+    font-weight: 500;
+  }
+
+  input[type="number"] {
+    width: 60px;
+    padding: 3px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    text-align: right;
+  }
+
+  button {
+    padding: 5px 10px;
+    background: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  button:hover {
+    background: #2980b9;
+  }
+
+  #seqResult, #eulerianResult, #stirlingResult, #distributionResult {
+    margin-top: 20px;
+    background: #fafafa;
+    padding: 15px;
+    border-radius: 4px;
+    font-size: 0.95rem;
+  }
+
+  footer {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #888;
+    margin: 40px 0;
+  }
+
+  .scenario-form label {
+    margin-right: 10px;
+  }
+
+  .scenario-form input[type="radio"] {
+    margin-left: 10px;
+    margin-right: 3px;
+  }
+</style>
+</head>
+
+<body>
+<!-- 頂部條列文字區: 可自行修改文字內容 -->
+<div class="top-bar">
+  hsnu &nbsp;|&nbsp; ntpu stat &nbsp;|&nbsp; nycu itm &nbsp;|&nbsp; compal ai &nbsp;|&nbsp; mtk dl &nbsp;|&nbsp; tsmc mfg
+</div>
+
+<header>
+  <!-- 圖片路徑請自行修改為有效路徑 -->
+  <img src="D:\hsnuntpunycucompalmtk\312708010科管所周亨昆 離散數學 計算機期末\henry.jpg" alt="Profile" width="60" height="60">
+  <h1>離散數學組合計算工具 (Combinatorial Calculator)</h1>
+</header>
+
+<div class="container">
+  <p><strong>程式設計作業1:</strong></p>
+  <p>輸入: 整數 n, r (m, k; 或 m, n) 使得 0 &le; r &le; n; (0 &le; k &le; m-1; 或 1 &le; n &le; m)</p>
+  <p>輸出:</p>
+  <ol>
+    <li>P(n, r), C(n, r), n^r, C(r+n-1, r) 等與 n, r 相關的數值</li>
+    <li>前 n 項 Catalan, Triangular, Harmonic, Fibonacci, Lucas 數列</li>
+    <li>Eulerian 數 a(m,k) 對 0 &le; k &le; m-1</li>
+    <li>第二類 Stirling 數 S(m,n) 對 1 &le; n &le; m</li>
+  </ol>
+  <p>獎勵：執行下表中的所有計算(各種 distinct/identical objects & containers, with/without empty containers)。</p>
+
+  <hr>
+
+  <!-- 基本組合計算 -->
+  <h2>基本組合計算結果</h2>
+  <table>
+    <tr>
+      <th>Formula</th>
+      <th>
+        <label>n = </label><input type="number" id="n" value="7" min="0">
+        <label>r = </label><input type="number" id="r" value="3" min="0">
+      </th>
+      <th><button type="button" onclick="computeAll()">Compute All</button></th>
+      <th>Order relevant</th>
+      <th>Repetition</th>
+      <th>Memo</th>
+    </tr>
+    <tr>
+      <td>P(n, r)</td>
+      <td><span id="resPermutation"></span></td>
+      <td><button type="button" onclick="clickPerm()">Permutation</button></td>
+      <td>yes</td>
+      <td>no</td>
+      <td align="left"># 排列：從 n 個不同物件中取 r 個排列</td>
+    </tr>
+    <tr>
+      <td>C(n, r)</td>
+      <td><span id="resCombination"></span></td>
+      <td><button type="button" onclick="clickComb()">Combination</button></td>
+      <td>no</td>
+      <td>no</td>
+      <td align="left"># 組合：從 n 個不同物件中選 r 個組合</td>
+    </tr>
+    <tr>
+      <td>n^r</td>
+      <td><span id="resArrangement"></span></td>
+      <td><button type="button" onclick="clickArra()">Arrangement with repetition</button></td>
+      <td>yes</td>
+      <td>yes</td>
+      <td align="left"># 有重複排列：n 種物件選 r 次(有序)</td>
+    </tr>
+    <tr>
+      <td>C(r+n-1, r)</td>
+      <td><span id="resSelectrofn"></span></td>
+      <td><button type="button" onclick="clickSele()">Selection with repetition</button></td>
+      <td>no</td>
+      <td>yes</td>
+      <td align="left"># 有重複組合：從 n 種物件重複選 r 個(無序)</td>
+    </tr>
+  </table>
+
+  <!-- 序列計算 -->
+  <h2>數列計算</h2>
+  <p>
+    輸入 n，計算前 n 項 Catalan, Triangular, Harmonic, Fibonacci, Lucas：
+    <input type="number" id="seqN" value="5" min="1">
+    <button onclick="computeSequences()">Compute Sequences</button>
+  </p>
+  <div id="seqResult"></div>
+
+  <!-- Eulerian 數 -->
+  <h2>Eulerian Numbers</h2>
+  <p>
+    輸入 m, k 計算 Eulerian 數 a(m,k) (0 &le; k &le; m-1)：
+    <input type="number" id="m" value="4" min="0"> 
+    <input type="number" id="k" value="2" min="0">
+    <button onclick="computeEulerian()">Compute Eulerian</button>
+  </p>
+  <div id="eulerianResult"></div>
+
+  <!-- Stirling 第二類數 -->
+  <h2>Stirling Numbers of the Second Kind</h2>
+  <p>
+    輸入 m, n 計算 S(m,n) (1 &le; n &le; m)：
+    <input type="number" id="sm" value="5" min="1"> 
+    <input type="number" id="sn" value="3" min="1">
+    <button onclick="computeStirling()">Compute Stirling</button>
+  </p>
+  <div id="stirlingResult"></div>
+
+  <!-- 分配計算 (Bonus) -->
+  <h2>分配計算(表中案例)</h2>
+  <p>選擇情境並輸入 m, n：</p>
+  <div class="scenario-form">
+    <label>
+      物件有無區分?
+      <input type="radio" name="obj" value="yes" checked>Yes
+      <input type="radio" name="obj" value="no">No
+    </label><br>
+    <label>
+      容器有無區分?
+      <input type="radio" name="cont" value="yes" checked>Yes
+      <input type="radio" name="cont" value="no">No
+    </label><br>
+    <label>
+      容器可空否?
+      <input type="radio" name="empty" value="yes" checked>Yes
+      <input type="radio" name="empty" value="no">No
+    </label>
+  </div>
+  <p>
+    m = <input type="number" id="dm" value="5" min="1">  
+    n = <input type="number" id="dn" value="3" min="1">
+    <button onclick="computeDistribution()">Compute Distribution</button>
+  </p>
+  <div id="distributionResult"></div>
+
+</div>
+
+<footer>
+  by chou heng kun | henrychou1233@gmail.com | 0961358727<br>
+  Ver.0.8 (2024/09/08)
+</footer>
+
+<script>
+// ============================================================
+// 基本組合數學函數區
+// ============================================================
+function Factorial(n) {
+  var fact = 1;
+  for (var i = 2; i <= n; i++)
+    fact *= i;
+  return fact;
+}
+
+function Perm(n, r) {
+  n = parseInt(n);
+  r = parseInt(r);
+  var perm = 1;
+  for (var i = n; i > n - r; i--)
+    perm *= i;
+  return perm;
+}
+
+function Comb(n, r) {
+  n = parseInt(n);
+  r = parseInt(r);
+  if(r>n) return 0;
+  return Perm(n, r) / Factorial(r);
+}
+
+function invalid(n, r) {
+  if (parseInt(n) < 0 || isNaN(parseInt(n))) {
+    document.getElementById("n").focus();
+    return true;
+  } else if (parseInt(r) < 0 || isNaN(parseInt(r))) {
+    document.getElementById("r").focus();
+    return true;
+  }
+  return false;
+}
+
+function computeAll() {
+  document.getElementById("resPermutation").innerHTML = "";
+  document.getElementById("resCombination").innerHTML = "";
+  document.getElementById("resArrangement").innerHTML = "";
+  document.getElementById("resSelectrofn").innerHTML = "";
+
+  var n = document.getElementById("n").value;
+  var r = document.getElementById("r").value;
+
+  if (invalid(n, r)) return;
+
+  clickPerm();
+  clickComb();
+  clickArra();
+  clickSele();
+}
+
+function clickPerm() {
+  document.getElementById("resPermutation").innerHTML = "";
+  var n = document.getElementById("n").value;
+  var r = document.getElementById("r").value;
+  if (invalid(n, r)) return;
+  document.getElementById("resPermutation").innerHTML = Perm(n, r);
+}
+
+function clickComb() {
+  document.getElementById("resCombination").innerHTML = "";
+  var n = document.getElementById("n").value;
+  var r = document.getElementById("r").value;
+  if (invalid(n, r)) return;
+  document.getElementById("resCombination").innerHTML = Comb(n, r);
+}
+
+function clickArra() {
+  document.getElementById("resArrangement").innerHTML = "";
+  var n = document.getElementById("n").value;
+  var r = document.getElementById("r").value;
+  if (invalid(n, r)) return;
+  document.getElementById("resArrangement").innerHTML = Math.pow(n, r);
+}
+
+function clickSele() {
+  document.getElementById("resSelectrofn").innerHTML = "";
+  var n = parseInt(document.getElementById("n").value);
+  var r = parseInt(document.getElementById("r").value);
+  if (invalid(n, r)) return;
+  document.getElementById("resSelectrofn").innerHTML = Comb(n + r - 1, r);
+}
+
+// ============================================================
+// 序列計算 Catalan, Triangular, Harmonic, Fibonacci, Lucas
+// ============================================================
+function catalanNumber(n) {
+  return Comb(2*n, n) / (n+1);
+}
+function triangularNumber(n) {
+  return n*(n+1)/2;
+}
+function harmonicNumber(n) {
+  var sum = 0;
+  for (var i=1; i<=n; i++) sum += 1/i;
+  return sum;
+}
+function fibonacciNumber(n) {
+  if(n<=2) return 1;
+  var a=1, b=1;
+  for(var i=3; i<=n; i++){
+    var c=a+b; a=b; b=c;
+  }
+  return b;
+}
+function lucasNumber(n) {
+  if(n==1) return 1;
+  if(n==2) return 3;
+  var a=1, b=3;
+  for(var i=3; i<=n; i++){
+    var c=a+b; a=b; b=c;
+  }
+  return b;
+}
+
+function computeSequences() {
+  var N = parseInt(document.getElementById("seqN").value);
+  if(isNaN(N) || N<1) return;
+  var res = "<h3>前 " + N + " 項：</h3>";
+
+  // Catalan
+  res += "<p><strong>Catalan:</strong> ";
+  for(var i=1; i<=N; i++) res += catalanNumber(i-1) + (i<N?", ":"");
+  res+="</p>";
+
+  // Triangular
+  res += "<p><strong>Triangular:</strong> ";
+  for(var i=1; i<=N; i++) res += triangularNumber(i) + (i<N?", ":"");
+  res+="</p>";
+
+  // Harmonic
+  res += "<p><strong>Harmonic:</strong> ";
+  for(var i=1; i<=N; i++) res += harmonicNumber(i).toFixed(5) + (i<N?", ":"");
+  res+="</p>";
+
+  // Fibonacci
+  res += "<p><strong>Fibonacci:</strong> ";
+  for(var i=1; i<=N; i++) res += fibonacciNumber(i) + (i<N?", ":"");
+  res+="</p>";
+
+  // Lucas
+  res += "<p><strong>Lucas:</strong> ";
+  for(var i=1; i<=N; i++) res += lucasNumber(i) + (i<N?", ":"");
+  res+="</p>";
+
+  document.getElementById("seqResult").innerHTML = res;
+}
+
+// ============================================================
+// Eulerian 數 a(m,k) = (m-k)*a(m-1,k-1)+(k+1)*a(m-1,k), a(0,0)=1
+// ============================================================
+function eulerian(m,k) {
+  if(m==0 && k==0) return 1;
+  if(k<0 || k>=m) return 0;
+  return (m-k)*eulerian(m-1,k-1)+(k+1)*eulerian(m-1,k);
+}
+
+function computeEulerian() {
+  var M = parseInt(document.getElementById("m").value);
+  var K = parseInt(document.getElementById("k").value);
+  if(isNaN(M) || isNaN(K) || K<0 || K>=M) {
+    document.getElementById("eulerianResult").innerHTML = "請輸入合法的 M, K";
+    return;
+  }
+  var res = "<p>a("+M+","+K+") = " + eulerian(M,K) + "</p>";
+  res += "<p>a("+M+",k) for k=0 to "+(M-1)+": ";
+  for(var i=0; i<M; i++){
+    res += eulerian(M,i)+(i<M-1?", ":"");
+  }
+  res+="</p>";
+  document.getElementById("eulerianResult").innerHTML = res;
+}
+
+// ============================================================
+// Stirling 第二類數 S(m,n)
+// S(m,n)= n*S(m-1,n)+S(m-1,n-1), S(n,n)=1, S(n,1)=1, n>m或n<1時=0
+// ============================================================
+var stirlingMemo = {};
+function stirling2(m,n) {
+  if(n>m) return 0;
+  if(m==n || n==1) return 1;
+  var key = m+","+n;
+  if(stirlingMemo[key]) return stirlingMemo[key];
+  var val = n*stirling2(m-1,n) + stirling2(m-1,n-1);
+  stirlingMemo[key]=val;
+  return val;
+}
+
+function computeStirling() {
+  var M = parseInt(document.getElementById("sm").value);
+  var N = parseInt(document.getElementById("sn").value);
+  if(isNaN(M) || isNaN(N) || N<1 || N>M) {
+    document.getElementById("stirlingResult").innerHTML = "請輸入合法的 M, N";
+    return;
+  }
+  var res = "<p>S("+M+","+N+") = " + stirling2(M,N) + "</p>";
+  res += "<p>所有 S("+M+",n) 對 n=1 至 "+M+"：";
+  for(var i=1; i<=M; i++){
+    res += stirling2(M,i)+(i<M?", ":"");
+  }
+  res+="</p>";
+  document.getElementById("stirlingResult").innerHTML = res;
+}
+
+// ============================================================
+// 整數分割函數 p(m,n):將 m 分為恰好 n 個正整數和的個數
+// p(m,n)=p(m-1,n-1)+p(m-n,n), 基本條件 p(0,0)=1,其他不合條件=0
+// ============================================================
+var partitionMemo = {};
+function partitionsExactly(m,n){
+  if(m<0) return 0;
+  if(m==0 && n==0) return 1;
+  if(m>0 && n==0) return 0;
+  if(n>m) return 0;
+  var key = m+"|"+n;
+  if(partitionMemo[key]!==undefined) return partitionMemo[key];
+  var val = partitionsExactly(m-1,n-1)+partitionsExactly(m-n,n);
+  partitionMemo[key]=val;
+  return val;
+}
+
+// at most n parts = sum_{k=1}^{n} p(m,k)
+function partitionsAtMost(m,n){
+  var sum=0;
+  for(var k=1; k<=n; k++){
+    sum += partitionsExactly(m,k);
+  }
+  return sum;
+}
+
+// ============================================================
+// 分配計算
+// 根據物件、容器、有無空容器來判斷使用哪個公式
+// ============================================================
+function computeDistribution() {
+  var m = parseInt(document.getElementById("dm").value);
+  var n = parseInt(document.getElementById("dn").value);
+
+  var obj = document.querySelector('input[name="obj"]:checked').value;   // yes/no
+  var cont = document.querySelector('input[name="cont"]:checked').value; // yes/no
+  var empty = document.querySelector('input[name="empty"]:checked').value; // yes/no
+
+  var result = "";
+  var interpretation = "";
+
+  // 按表中的情境分類
+  if(obj==="yes" && cont==="yes" && empty==="yes"){
+    // distinct obj, distinct cont, empty yes => n^m
+    result = Math.pow(n,m);
+    interpretation = "m有區分物件，n有區分容器，可有空：n^m";
+  } else if(obj==="yes" && cont==="yes" && empty==="no"){
+    // distinct obj, distinct cont, no empty => n! S(m,n)
+    result = Factorial(n)*stirling2(m,n);
+    interpretation = "m有區分物件，n有區分容器，不可空：n! S(m,n)";
+  } else if(obj==="yes" && cont==="no" && empty==="no"){
+    // distinct obj, identical cont, no empty
+    // exactly n containers: S(m,n)
+    var exactN = stirling2(m,n);
+    // up to n containers: Σ S(m,k)
+    var upToN=0;
+    for(var k=1; k<=n; k++){
+      upToN += stirling2(m,k);
+    }
+    result = "Exactly n: S(m,n)="+exactN+"；Up to n: ΣS(m,k)="+upToN;
+    interpretation = "m有區分物件，n無區分容器，不可空：exact n用S(m,n)，最多n用Σ S(m,k)";
+  } else if(obj==="no" && cont==="yes" && empty==="yes"){
+    // no distinct obj, distinct cont, empty yes => C(m+n-1,m)
+    result = Comb(m+n-1,m);
+    interpretation = "m無區分物件，n有區分容器，可空：C(m+n-1,m)";
+  } else if(obj==="no" && cont==="yes" && empty==="no"){
+    // no distinct obj, distinct cont, no empty => C(m-1,n-1)
+    result = Comb(m-1,n-1);
+    interpretation = "m無區分物件，n有區分容器，不可空：C(m-1,n-1)";
+  } else if(obj==="no" && cont==="no" && empty==="yes"){
+    // no distinct obj, no distinct cont, empty yes
+    // at most n parts: Σ p(m,k), k=1 to n
+    var atMostN = partitionsAtMost(m,n);
+    result = atMostN;
+    interpretation = "m無區分物件，n無區分容器，可空：對應m分割成最多n項 = Σ p(m,k)";
+  } else if(obj==="no" && cont==="no" && empty==="no"){
+    // no distinct obj, no distinct cont, no empty => p(m,n)
+    var exact = partitionsExactly(m,n);
+    result = exact;
+    interpretation = "m無區分物件，n無區分容器，不可空：p(m,n)";
+  } else {
+    result = "無對應案例";
+    interpretation = "無此情境";
+  }
+
+  document.getElementById("distributionResult").innerHTML = "<p>Result: "+result+"</p><p>Interpretation: "+interpretation+"</p>";
+}
+</script>
+
+</body>
+</html>
